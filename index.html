@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Biblioteca Virtual</title>
+
+    <!-- Fonte Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Ícones -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header>
+
+        <h1><i class="fa-solid fa-book"></i> Biblioteca Virtual</h1>
+
+        <p>Gerencie seus livros de maneira simples e organizada.</p>
+
+    </header>
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <section class="dashboard">
+
+        <div class="info-card">
+
+            <i class="fa-solid fa-book"></i>
+
+            <h2>Total</h2>
+
+            <span id="totalLivros">0</span>
+
+        </div>
+
+        <div class="info-card">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <h2>Disponíveis</h2>
+
+            <span id="livrosDisponiveis">0</span>
+
+        </div>
+
+        <div class="info-card">
+
+            <i class="fa-solid fa-book-open-reader"></i>
+
+            <h2>Emprestados</h2>
+
+            <span id="livrosEmprestados">0</span>
+
+        </div>
+
+        <div class="info-card">
+
+            <i class="fa-solid fa-clock"></i>
+
+            <h2>Atrasados</h2>
+
+            <span id="livrosAtrasados">0</span>
+
+        </div>
+
+    </section>
+
+    <!-- ================= CONTAINER ================= -->
+
+    <main class="container">
+
+        <!-- Cadastro -->
+
+        <section class="card">
+
+            <h2>Cadastrar Livro</h2>
+
+            <form id="formCadastro">
+
+                <div class="grupo">
+
+                    <label>ID</label>
+
+                    <input
+                        type="text"
+                        id="idLivro"
+                        placeholder="Digite o ID">
+
+                </div>
+
+                <div class="grupo">
+
+                    <label>Título</label>
+
+                    <input
+                        type="text"
+                        id="tituloLivro"
+                        placeholder="Digite o título">
+
+                </div>
+
+                <div class="grupo">
+
+                    <label>Autor</label>
+
+                    <input
+                        type="text"
+                        id="autorLivro"
+                        placeholder="Digite o autor">
+
+                </div>
+
+                <div class="grupo">
+
+                    <label>Data de Cadastro</label>
+
+                    <input
+                        type="text"
+                        id="dataLivro"
+                        placeholder="dd/mm/aaaa">
+
+                </div>
+
+                <button type="submit">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Cadastrar Livro
+
+                </button>
+
+            </form>
+
+        </section>
+
+        <!-- Pesquisa -->
+
+        <section class="card">
+
+            <h2>Pesquisar Livro</h2>
+
+            <div class="pesquisa">
+
+                <input
+                    type="text"
+                    id="campoPesquisa"
+                    placeholder="Pesquisar por ID ou título">
+
+                <button id="btnPesquisar">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    Buscar
+
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- Operações -->
+
+        <section class="card">
+
+            <h2>Operações</h2>
+
+            <div class="acoes">
+
+                <input
+                    type="text"
+                    id="idOperacao"
+                    placeholder="Informe o ID do livro">
+
+                <button id="btnEmprestar">
+
+                    <i class="fa-solid fa-book-open"></i>
+
+                    Emprestar
+
+                </button>
+
+                <button id="btnDevolver">
+
+                    <i class="fa-solid fa-rotate-left"></i>
+
+                    Devolver
+
+                </button>
+
+                <button id="btnRemover">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                    Remover
+
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- Lista -->
+
+        <section class="card">
+
+            <div class="cabecalho-lista">
+
+                <h2>Livros Cadastrados</h2>
+
+                <button id="btnAtualizar">
+
+                    <i class="fa-solid fa-arrows-rotate"></i>
+
+                    Atualizar
+
+                </button>
+
+            </div>
+
+            <div id="listaLivros" class="lista-livros">
+
+                <!-- Os cards serão inseridos pelo JavaScript -->
+
+            </div>
+
+        </section>
+
+        <!-- Livros atrasados -->
+
+        <section class="card">
+
+            <h2>Livros Atrasados</h2>
+
+            <div id="listaAtrasados">
+
+                <p>Nenhum livro atrasado.</p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ================= MODAL EDITAR ================= -->
+
+    <div id="modalEditar" class="modal">
+
+        <div class="modal-content">
+
+            <h2>Editar Livro</h2>
+
+            <input
+                type="text"
+                id="editarTitulo"
+                placeholder="Novo título">
+
+            <input
+                type="text"
+                id="editarAutor"
+                placeholder="Novo autor">
+
+            <input
+                type="text"
+                id="editarData"
+                placeholder="Nova data">
+
+            <div class="botoes-modal">
+
+                <button id="btnSalvar">
+
+                    Salvar
+
+                </button>
+
+                <button id="btnCancelar">
+
+                    Cancelar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= RODAPÉ ================= -->
+
+    <footer>
+
+        <p>
+
+            <i class="fa-solid fa-book"></i>
+
+            Biblioteca Virtual © 2026
+
+        </p>
+
+        <p>Projeto desenvolvido em HTML, CSS e JavaScript.</p>
+
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
