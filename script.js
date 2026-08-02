@@ -23,34 +23,13 @@ const btnCancelar = document.getElementById("btnCancelar");
 
 let livroEditando = null;
 
-let library = [];
-
-<<<<<<< HEAD
-function salvarBiblioteca(){
-  localStorage.setItem(
-    "library",
-    JSON.stringify(library)
-  );
-}
-
-function carregarBiblioteca(){
-   let dados = localStorage.getItem("library");
-
-   if(dados){
-
-    library = JSON.parse(dados);
-
-
-   }
-}
-
-
+let biblioteca = [];
 
 formCadastro.addEventListener("submit", function (event) {
 
   event.preventDefault();
 
-  registerBook(
+  cadastrarLivro(
     idLivro.value,
     tituloLivro.value,
     autorLivro.value,
@@ -76,23 +55,23 @@ function mostrarLivros() {
 
   listaLivros.innerHTML = "";
 
-  library.forEach(book => {
+  biblioteca.forEach(livro => {
 
-    let card = document.createElement("div");
-    card.classList.add("livro");
+    let cartao = document.createElement("div");
+    cartao.classList.add("livro");
 
-    card.innerHTML = `
-      <h3>${book.title}</h3>
+    cartao.innerHTML = `
+      <h3>${livro.titulo}</h3>
 
-      <p><strong>ID:</strong> ${book.id}</p>
+      <p><strong>ID:</strong> ${livro.id}</p>
 
-      <p><strong>Autor:</strong> ${book.autor}</p>
+      <p><strong>Autor:</strong> ${livro.autor}</p>
 
-      <p><strong>Cadastro:</strong> ${book.createDate}</p>
+      <p><strong>Cadastro:</strong> ${livro.dataCadastro}</p>
 
       <p>
         <strong>Status:</strong>
-        ${book.foiEmprestado ? "🔴 Emprestado" : "🟢 Disponível"}
+        ${livro.foiEmprestado ? "🔴 Emprestado" : "🟢 Disponível"}
       </p>
     `;
 
@@ -102,13 +81,13 @@ function mostrarLivros() {
     let btnEmprestar = document.createElement("button");
 
 
-    if(book.foiEmprestado){
+    if(livro.foiEmprestado){
 
       btnEmprestar.textContent = "Devolver";
 
       btnEmprestar.addEventListener("click", function(){
 
-        returnBook(book.id);
+        devolverLivro(livro.id);
 
         atualizarTela();
 
@@ -122,7 +101,7 @@ function mostrarLivros() {
 
       btnEmprestar.addEventListener("click", function(){
 
-        lendBook(book.id);
+        emprestarLivro(livro.id);
 
         atualizarTela();
 
@@ -141,7 +120,7 @@ function mostrarLivros() {
 
     btnEditar.addEventListener("click", function(){
 
-      abrirModalEdicao(book);
+      abrirModalEdicao(livro);
 
     });
 
@@ -156,9 +135,9 @@ function mostrarLivros() {
 
     btnRemover.addEventListener("click", function(){
 
-      if(confirm(`Deseja remover "${book.title}"?`)){
+      if(confirm(`Deseja remover "${livro.titulo}"?`)){
 
-        removeBook(book.id);
+        removerLivro(livro.id);
 
         atualizarTela();
 
@@ -172,7 +151,7 @@ function mostrarLivros() {
 
     let botoes = document.createElement("div");
 
-    botoes.classList.add("botoes-card");
+    botoes.classList.add("botoes-cartao");
 
 
     botoes.appendChild(btnEmprestar);
@@ -183,25 +162,25 @@ function mostrarLivros() {
 
 
 
-    card.appendChild(botoes);
+    cartao.appendChild(botoes);
 
 
-    listaLivros.appendChild(card);
+    listaLivros.appendChild(cartao);
 
 
   });
 
 }
 
-function abrirModalEdicao(book){
+function abrirModalEdicao(livro){
 
-    livroEditando = book;
+    livroEditando = livro;
 
-    editarTitulo.value = book.title;
+    editarTitulo.value = livro.titulo;
 
-    editarAutor.value = book.autor;
+    editarAutor.value = livro.autor;
 
-    editarData.value = book.createDate;
+    editarData.value = livro.dataCadastro;
 
 
     modalEditar.style.display = "flex";
@@ -215,12 +194,12 @@ btnSalvar.addEventListener("click", function(){
         return;
     }
 
-    updateBookData(
+    atualizarDadosLivro(
         livroEditando.id,
         {
-            title: editarTitulo.value,
+            titulo: editarTitulo.value,
             autor: editarAutor.value,
-            createDate: editarData.value
+            dataCadastro: editarData.value
         }
     );
 
@@ -242,226 +221,202 @@ btnCancelar.addEventListener("click", function(){
 
 
 
-function registerBook(id, title, autor, createDate, foiEmprestado) {
+function cadastrarLivro(id, titulo, autor, dataCadastro, foiEmprestado) {
 
-  let book = {
+  let livro = {
     id,
-    title,
+    titulo,
     autor,
-    createDate,
+    dataCadastro,
     foiEmprestado,
     dataEmprestimo: null,
     dataDevolucaoPrevista: null
   };
 
-  library.push(book);
+  biblioteca.push(livro);
 
-
-  salvarBiblioteca();
-
-
-  return book;
+  return livro;
 }
 function atualizarDashboard(){
-  totalLivros.textContent = library.length;
+  totalLivros.textContent = biblioteca.length;
 
-  livrosDisponiveis.textContent = availableQuantity();
+  livrosDisponiveis.textContent = quantidadeDisponiveis();
 
-  livrosEmprestados.textContent = amountBorrowed();
+  livrosEmprestados.textContent = quantidadeEmprestados();
 
   livrosAtrasados.textContent = listarLivrosAtrasados().length;
 
 }
-function listBooks() {
-  console.log("Sua lista de livros é: ", library);
+function listarLivros() {
+  console.log("Sua lista de livros é: ", biblioteca);
 }
 
-function searchForId(id) {
-  let buscar = library.find((item) => {
+function buscarPorId(id) {
+  let livroEncontrado = biblioteca.find((item) => {
     return item.id === id;
   });
-  return buscar;
+  return livroEncontrado;
 }
 
-function searchForTitle(title) {
-  let buscar = library.find((item) => {
-    return item.title === title;
+function buscarPorTitulo(titulo) {
+  let livroEncontrado = biblioteca.find((item) => {
+    return item.titulo === titulo;
   });
 
-  return buscar;
+  return livroEncontrado;
 }
 
-function searchForAutor(autor) {
-  let buscar = library.filter((item) => {
+function buscarPorAutor(autor) {
+  let livroEncontrado = biblioteca.filter((item) => {
     return item.autor === autor;
   });
 
-  return buscar;
+  return livroEncontrado;
 }
 
-function updateBookData(id, newData) {
-  let book = library.find((item) => item.id === id);
+function atualizarDadosLivro(id, novosDados) {
+  let livro = biblioteca.find((item) => item.id === id);
 
-  if (!book) {
+  if (!livro) {
     alert("Seu livro não foi encontrado!");
     return;
   }
 
-  if (newData.title !== undefined) {
-    book.title = newData.title;
+  if (novosDados.titulo !== undefined) {
+    livro.titulo = novosDados.titulo;
   }
 
-  if (newData.autor !== undefined) {
-    book.autor = newData.autor;
+  if (novosDados.autor !== undefined) {
+    livro.autor = novosDados.autor;
   }
 
-  if (newData.createDate !== undefined) {
-    book.createDate = newData.createDate;
+  if (novosDados.dataCadastro !== undefined) {
+    livro.dataCadastro = novosDados.dataCadastro;
   }
 
-  if (newData.foiEmprestado !== undefined) {
-    book.foiEmprestado = newData.foiEmprestado;
+  if (novosDados.foiEmprestado !== undefined) {
+    livro.foiEmprestado = novosDados.foiEmprestado;
   }
-
-
-   salvarBiblioteca();
 
   
-
 }
 
-function removeBook(id) {
-  let index = library.findIndex((item) => item.id === id);
-  if (index === -1) {
+function removerLivro(id) {
+  let indice = biblioteca.findIndex((item) => item.id === id);
+  if (indice === -1) {
     alert("Seu livro não foi encontrado!");
     return;
   }
-  library.splice(index, 1);
-
-
-  salvarBiblioteca();
-
-
+  biblioteca.splice(indice, 1);
 }
 
-function lendBook(id, dias = 7) {
-  let book = library.find((item) => item.id === id);
+function emprestarLivro(id, dias = 7) {
+  let livro = biblioteca.find((item) => item.id === id);
 
-  if (!book) {
+  if (!livro) {
     alert("Seu livro não foi encontrado!");
     return;
   }
 
-  if (book.foiEmprestado) {
+  if (livro.foiEmprestado) {
     alert("Esse livro já está emprestado!");
     return;
   } 
  
- let hoje = new Date();
+ let dataHoje = new Date();
 
- let devolucao= new Date();
- devolucao.setDate(hoje.getDate() + dias);
+ let dataDevolucao = new Date();
+ dataDevolucao.setDate(dataHoje.getDate() + dias);
 
-  book.foiEmprestado = true;
-  book.dataEmprestimo = formatarData(hoje);
-  book.dataDevolucaoPrevista = formatarData(devolucao);
-
-
-  salvarBiblioteca();
+  livro.foiEmprestado = true;
+  livro.dataEmprestimo = formatarData(dataHoje);
+  livro.dataDevolucaoPrevista = formatarData(dataDevolucao);
 
   alert("Livro emprestado com sucesso!");
-
-
-
-  alert("Livro emprestado com sucesso!");
-
 }
 
-function returnBook(id) {
-  let book = library.find((item) => item.id === id);
+function devolverLivro(id) {
+  let livro = biblioteca.find((item) => item.id === id);
 
-  if (!book) {
+  if (!livro) {
     alert("Seu livro não foi encontrado!");
     return;
   }
 
-  if (!book.foiEmprestado) {
+  if (!livro.foiEmprestado) {
     alert("Esse livro não está emprestado!");
     return;
   }
 
-  book.foiEmprestado = false;
-  book.dataEmprestimo = null;
-  book.dataDevolucaoPrevista = null;
-
-
-  salvarBiblioteca();
+  livro.foiEmprestado = false;
+  livro.dataEmprestimo = null;
+  livro.dataDevolucaoPrevista = null;
 
   alert("livro devolvido com sucesso!");
 }
 
-function listAvailableBook() {
-  let disponivel = library.filter((item) => item.foiEmprestado === false);
+function listarLivrosDisponiveis() {
+  let livrosDisponiveisLista = biblioteca.filter((item) => item.foiEmprestado === false);
   alert("Livros disponíveis: ", disponivel);
-  return disponivel;
+  return livrosDisponiveisLista;
 }
 
-function listBorrowedBooks() {
-  let emprestado = library.filter((item) => item.foiEmprestado === true);
+function listarLivrosEmprestados() {
+  let livrosEmprestadosLista = biblioteca.filter((item) => item.foiEmprestado === true);
  alert("Livros emprestados: ", emprestado);
-  return emprestado;
+  return livrosEmprestadosLista;
 }
 
-function availableQuantity() {
-  return library.filter(book => !book.foiEmprestado).length;
+function quantidadeDisponiveis() {
+  return biblioteca.filter(livro => !livro.foiEmprestado).length;
 }
-function amountBorrowed() {
-  return library.filter(book => book.foiEmprestado).length;
+function quantidadeEmprestados() {
+  return biblioteca.filter(livro => livro.foiEmprestado).length;
 }
 
 function converterData(dataTexto) {
-  let partes = dataTexto.split("/");
+  let partesData = dataTexto.split("/");
 
-  let dia = partes[0];
-  let mes = partes[1];
-  let ano = partes[2];
+  let dia = partesData[0];
+  let mes = partesData[1];
+  let ano = partesData[2];
 
   let data = new Date(ano, mes - 1, dia);
   return data;
 }
 
 function livroMaisAntigo() {
-  if(library.length === 0) return null;
+  if(biblioteca.length === 0) return null;
 
-  let maisAntigo = library[0];
-  for (let i = 1; i < library.length; i++) {
-    let dataAtual = converterData(library[i].createDate);
-    let dataMaisAntigo = converterData(maisAntigo.createDate);
+  let maisAntigo = biblioteca[0];
+  for (let i = 1; i < biblioteca.length; i++) {
+    let dataAtual = converterData(biblioteca[i].dataCadastro);
+    let dataMaisAntigo = converterData(maisAntigo.dataCadastro);
 
     if (dataAtual < dataMaisAntigo) {
-      maisAntigo = library[i];
+      maisAntigo = biblioteca[i];
     }
   }
 
-  return maisAntigo.title;
+  return maisAntigo.titulo;
 }
 
 function livroMaisRecente() {
-  if(library.length === 0) return null;
-  let maisRecente = library[0];
-  for (let i = 1; i < library.length; i++) {
-    let dataAtual = converterData(library[i].createDate);
-    let dataMaisRecente = converterData(maisRecente.createDate);
+  if(biblioteca.length === 0) return null;
+  let maisRecente = biblioteca[0];
+  for (let i = 1; i < biblioteca.length; i++) {
+    let dataAtual = converterData(biblioteca[i].dataCadastro);
+    let dataMaisRecente = converterData(maisRecente.dataCadastro);
 
     if (dataAtual > dataMaisRecente) {
-      maisRecente = library[i];
+      maisRecente = biblioteca[i];
     }
   }
 
-  return maisRecente.title;
+  return maisRecente.titulo;
 }
-function listTitleBooks() {
-  let titulos = library.map((item) => item.title);
+function listarTitulosLivros() {
+  let titulos = biblioteca.map((item) => item.titulo);
   return titulos;
 }
 //funcoes extras:
@@ -475,14 +430,14 @@ function formatarData(data) {
 }
 
 function listarLivrosAtrasados() {
-  let hoje = new Date();
+  let dataHoje = new Date();
 
-  let atrasados = library.filter( book => {
-    if(!book.foiEmprestado) return false;
+  let atrasados = biblioteca.filter( livro => {
+    if(!livro.foiEmprestado) return false;
 
-    if(!book.dataDevolucaoPrevista) return false;
+    if(!livro.dataDevolucaoPrevista) return false;
 
-    let dataPrevista = converterData(book.dataDevolucaoPrevista);
+    let dataPrevista = converterData(livro.dataDevolucaoPrevista);
 
     return dataPrevista < hoje;
   });
@@ -491,10 +446,6 @@ function listarLivrosAtrasados() {
   return atrasados;
   
 }
-
-
-carregarBiblioteca();
-
 
 
 atualizarTela();
