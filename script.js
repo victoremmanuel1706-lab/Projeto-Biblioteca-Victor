@@ -21,6 +21,10 @@ const editarData = document.getElementById("editarData");
 const btnSalvar = document.getElementById("btnSalvar");
 const btnCancelar = document.getElementById("btnCancelar");
 
+const campoPesquisa = document.getElementById("campoPesquisa");
+const btnPesquisar = document.getElementById("btnPesquisar");
+const mensagemPesquisa = document.getElementById("mensagemPesquisa");
+
 let livroEditando = null;
 
 let biblioteca = [];
@@ -45,17 +49,42 @@ formCadastro.addEventListener("submit", function (event) {
 
 function atualizarTela(){
 
-  mostrarLivros();
+  mostrarLivros(biblioteca);
 
   atualizarDashboard();
 
 }
 
-function mostrarLivros() {
+btnPesquisar.addEventListener("click", function() {
+
+  let textoPesquisado = campoPesquisa.value;
+    if(textoPesquisado === ""){
+
+      mostrarLivros(biblioteca)
+      return;
+    }
+
+  let resultadoPesquisa = buscarLivros(textoPesquisado);
+
+    if(resultadoPesquisa.length === 0){
+
+      mensagemPesquisa.textContent = "Nenhum livro encontrado.";
+
+    } else{
+
+      mensagemPesquisa.textContent = "";
+
+    }
+
+  mostrarLivros(resultadoPesquisa);
+});
+
+
+function mostrarLivros(lista) {
 
   listaLivros.innerHTML = "";
 
-  biblioteca.forEach(livro => {
+  lista.forEach(livro => {
 
     let cartao = document.createElement("div");
     cartao.classList.add("livro");
@@ -259,11 +288,32 @@ function buscarPorId(id) {
 }
 
 function buscarPorTitulo(titulo) {
-  let livroEncontrado = biblioteca.find((item) => {
-    return item.titulo === titulo;
+  let livroEncontrado = biblioteca.filter((item) => {
+    return item.titulo.toLowerCase().includes(titulo.toLowerCase());
   });
 
   return livroEncontrado;
+}
+
+function buscarLivros(texto){
+
+  let livroPorId = buscarPorId(texto);
+
+  if(livroPorId){
+
+    return [livroPorId];
+
+  }
+  let livrosPorTitulo = buscarPorTitulo(texto);
+
+  if(livrosPorTitulo){
+
+    return livrosPorTitulo;
+
+  }
+
+  return [];
+
 }
 
 function buscarPorAutor(autor) {
@@ -439,7 +489,7 @@ function listarLivrosAtrasados() {
 
     let dataPrevista = converterData(livro.dataDevolucaoPrevista);
 
-    return dataPrevista < hoje;
+    return dataPrevista < dataHoje;
   });
 
   
