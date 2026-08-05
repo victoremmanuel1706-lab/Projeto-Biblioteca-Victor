@@ -372,6 +372,8 @@ function removerLivro(id) {
     return;
   }
   biblioteca.splice(indice, 1);
+
+  salvarBiblioteca();
 }
 
 function emprestarLivro(id, dias = 7) {
@@ -424,14 +426,18 @@ function devolverLivro(id) {
 }
 
 function listarLivrosDisponiveis() {
-  let livrosDisponiveisLista = biblioteca.filter((item) => item.foiEmprestado === false);
-  alert("Livros disponíveis: ", disponivel);
+  let livrosDisponiveisLista = biblioteca.filter((livro) => {
+    return livro.foiEmprestado === false;
+  });
+
   return livrosDisponiveisLista;
 }
 
 function listarLivrosEmprestados() {
-  let livrosEmprestadosLista = biblioteca.filter((item) => item.foiEmprestado === true);
- alert("Livros emprestados: ", emprestado);
+  let livrosEmprestadosLista = biblioteca.filter((livro) => {
+    return livro.foiEmprestado === true;
+  });
+
   return livrosEmprestadosLista;
 }
 
