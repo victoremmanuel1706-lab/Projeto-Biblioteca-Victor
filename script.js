@@ -29,6 +29,18 @@ let livroEditando = null;
 
 let biblioteca = [];
 
+function salvarBiblioteca() {
+  localStorage.setItem("biblioteca", JSON.stringify(biblioteca));
+}
+
+function carregarBiblioteca() {
+  let dados = localStorage.getItem("biblioteca");
+
+  if (dados) {
+    biblioteca = JSON.parse(dados);
+  }
+}
+
 formCadastro.addEventListener("submit", function (event) {
 
   event.preventDefault();
@@ -264,6 +276,8 @@ function cadastrarLivro(id, titulo, autor, dataCadastro, foiEmprestado) {
 
   biblioteca.push(livro);
 
+  salvarBiblioteca();
+
   return livro;
 }
 function atualizarDashboard(){
@@ -348,7 +362,7 @@ function atualizarDadosLivro(id, novosDados) {
     livro.foiEmprestado = novosDados.foiEmprestado;
   }
 
-  
+    salvarBiblioteca();
 }
 
 function removerLivro(id) {
@@ -382,6 +396,8 @@ function emprestarLivro(id, dias = 7) {
   livro.dataEmprestimo = formatarData(dataHoje);
   livro.dataDevolucaoPrevista = formatarData(dataDevolucao);
 
+  salvarBiblioteca();
+
   alert("Livro emprestado com sucesso!");
 }
 
@@ -401,6 +417,8 @@ function devolverLivro(id) {
   livro.foiEmprestado = false;
   livro.dataEmprestimo = null;
   livro.dataDevolucaoPrevista = null;
+
+  salvarBiblioteca();
 
   alert("livro devolvido com sucesso!");
 }
@@ -497,5 +515,5 @@ function listarLivrosAtrasados() {
   
 }
 
-
+carregarBiblioteca();
 atualizarTela();
